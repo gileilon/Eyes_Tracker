@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from PIL import Image
-
+from tqdm import tqdm
 
 class DataConvertor:
     def __init__(self, folder_path):
@@ -11,13 +11,12 @@ class DataConvertor:
         pixels_vectors = []
         file_names = os.listdir(self.folder_path)
 
-        for file_name in file_names:
+        for file_name in tqdm(file_names, desc='loading files'):
             if file_name.endswith(".jpg"):
                 image_path = os.path.join(self.folder_path, file_name)
                 try:
-                    image = Image.open(image_path)
-                    pixel_vector = list(image.getdata())
-                    flattened_vector = [pixel for sublist in pixel_vector for pixel in sublist]
+                    image = Image.open(image_path).convert('L')
+                    flattened_vector = np.array(image).flatten()
                     pixels_vectors.append(flattened_vector)
                     image.close()
                 except Exception as e:
